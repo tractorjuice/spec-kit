@@ -147,7 +147,7 @@ Want to see Spec Kit in action? Watch our [video overview](https://www.youtube.c
 | [Auggie CLI](https://docs.augmentcode.com/cli/overview)   | ✅ |                                                   |
 | [CodeBuddy CLI](https://www.codebuddy.ai/cli)             | ✅ |                                                   |
 | [Roo Code](https://roocode.com/)                          | ✅ |                                                   |
-| [Codex CLI](https://github.com/openai/codex)              | ✅ |                                                   |
+| [Codex CLI](https://github.com/openai/codex)              | ✅ | Requires `CODEX_HOME` environment variable ([setup guide](./AGENTS.md#codex-cli-setup)) |
 | [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/) | ⚠️ | Amazon Q Developer CLI [does not support](https://github.com/aws/amazon-q-developer-cli/issues/3064) custom arguments for slash commands. |
 
 ## 🔧 Specify CLI Reference

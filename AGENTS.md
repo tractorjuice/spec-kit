@@ -37,7 +37,7 @@ Specify supports multiple AI agents by generating agent-specific command files a
 | **Cursor** | `.cursor/commands/` | Markdown | `cursor-agent` | Cursor CLI |
 | **Qwen Code** | `.qwen/commands/` | TOML | `qwen` | Alibaba's Qwen Code CLI |
 | **opencode** | `.opencode/command/` | Markdown | `opencode` | opencode CLI |
-| **Codex CLI** | `.codex/commands/` | Markdown | `codex` | Codex CLI |
+| **Codex CLI** | `.codex/prompts/` | Markdown | `codex` | Codex CLI (requires CODEX_HOME env var) |
 | **Windsurf** | `.windsurf/workflows/` | Markdown | N/A (IDE-based) | Windsurf IDE workflows |
 | **Kilo Code** | `.kilocode/rules/` | Markdown | N/A (IDE-based) | Kilo Code IDE |
 | **Auggie CLI** | `.augment/rules/` | Markdown | `auggie` | Auggie CLI |
@@ -290,17 +290,131 @@ echo "✅ Done"
 
 Require a command-line tool to be installed:
 - **Claude Code**: `claude` CLI
-- **Gemini CLI**: `gemini` CLI  
+- **Gemini CLI**: `gemini` CLI
 - **Cursor**: `cursor-agent` CLI
 - **Qwen Code**: `qwen` CLI
 - **opencode**: `opencode` CLI
+- **Codex CLI**: `codex` CLI (requires `CODEX_HOME` environment variable)
 - **Amazon Q Developer CLI**: `q` CLI
 - **CodeBuddy CLI**: `codebuddy` CLI
+- **Auggie CLI**: `auggie` CLI
 
 ### IDE-Based Agents
 Work within integrated development environments:
 - **GitHub Copilot**: Built into VS Code/compatible editors
 - **Windsurf**: Built into Windsurf IDE
+
+## Agent-Specific Setup Requirements
+
+### Codex CLI Setup
+
+**IMPORTANT**: Codex CLI requires additional environment configuration to discover project-specific prompts.
+
+#### Why This Is Needed
+
+By default, Codex CLI only looks for prompts in the global user directory (`~/.codex/prompts/`). To use project-specific prompts from `.codex/prompts/`, you must set the `CODEX_HOME` environment variable to point to your project's `.codex` directory.
+
+See [GitHub Issue #417](https://github.com/github/spec-kit/issues/417) for background.
+
+#### Setup Options
+
+Choose one of these methods to configure `CODEX_HOME`:
+
+##### Option 1: direnv (Recommended for automatic per-project setup)
+
+1. Install [direnv](https://direnv.net/):
+   ```bash
+   # macOS
+   brew install direnv
+
+   # Linux
+   sudo apt install direnv  # or use your package manager
+   ```
+
+2. Add direnv hook to your shell config (`~/.bashrc`, `~/.zshrc`, etc.):
+   ```bash
+   eval "$(direnv hook bash)"  # or zsh, fish, etc.
+   ```
+
+3. The `.envrc` file is automatically created by `specify init --ai codex` with:
+   ```bash
+   export CODEX_HOME="$PWD/.codex"
+   ```
+
+4. Allow direnv to load the environment:
+   ```bash
+   direnv allow
+   ```
+
+Now `CODEX_HOME` will be automatically set whenever you `cd` into this directory.
+
+##### Option 2: Manual export (Quick test)
+
+Set the environment variable in your current shell:
+
+```bash
+# Bash/Zsh
+export CODEX_HOME=/path/to/your/project/.codex
+
+# PowerShell
+$env:CODEX_HOME = "C:\path\to\your\project\.codex"
+```
+
+**Note**: This only lasts for the current shell session.
+
+##### Option 3: Devcontainer (For VS Code devcontainers)
+
+The `.devcontainer/devcontainer.json` automatically sets `CODEX_HOME`:
+
+```json
+{
+  "containerEnv": {
+    "CODEX_HOME": "${containerWorkspaceFolder}/.codex"
+  }
+}
+```
+
+This is already configured in spec-kit devcontainer setups.
+
+##### Option 4: Project-specific shell script
+
+Create a setup script in your project:
+
+```bash
+# setup-codex.sh
+#!/bin/bash
+export CODEX_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.codex"
+echo "CODEX_HOME set to: $CODEX_HOME"
+```
+
+Then source it before using Codex:
+```bash
+source ./setup-codex.sh
+codex  # Now prompts will be discovered
+```
+
+#### Verification
+
+Verify the setup is working:
+
+```bash
+# 1. Check the environment variable
+echo $CODEX_HOME
+# Should output: /path/to/your/project/.codex
+
+# 2. List available prompts
+ls -la "$CODEX_HOME/prompts/"
+# Should show speckit.*.md files
+
+# 3. Test Codex discovery
+codex --help  # or your method to see available prompts
+```
+
+#### Security Notes
+
+- **Add to `.gitignore`**: The `.codex/` directory may contain authentication tokens
+- The generated `.gitignore` includes: `.codex/*` with `!.codex/prompts/` to track prompts but exclude auth files
+- Never commit `.codex/auth.json` or similar credential files
 
 ## Command File Formats
 

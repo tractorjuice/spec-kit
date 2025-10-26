@@ -32,6 +32,9 @@
   ],
   "containerUser": "devcontainer",
   "updateRemoteUserUID": true,
+  "containerEnv": {
+	"CODEX_HOME": "${containerWorkspaceFolder}/.codex"
+  },
   "postCreateCommand": "chmod +x ./.devcontainer/post-create.sh && ./.devcontainer/post-create.sh",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
   "customizations": {

@@ -7,6 +7,28 @@ All notable changes to the Specify CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Codex CLI automatic setup**: `specify init --ai codex` now automatically creates `.envrc` file with `CODEX_HOME` environment variable configuration
+  - Eliminates manual environment setup required for Codex to discover project-specific prompts
+  - Creates `.gitignore` entries to exclude Codex auth tokens while preserving prompts
+  - Includes direnv setup instructions in post-installation steps
+  - Devcontainer automatically sets `CODEX_HOME` for seamless development experience
+- Comprehensive Codex CLI setup documentation in `AGENTS.md` with multiple configuration options (direnv, manual export, devcontainer, shell scripts)
+
+### Changed
+
+- Updated `AGENTS.md` to correct Codex directory from `.codex/commands/` to `.codex/prompts/` (matches actual implementation)
+- Updated `README.md` Supported AI Agents table to note Codex CODEX_HOME requirement with link to setup guide
+- Release package script now includes `.envrc` and `.gitignore` in Codex template packages
+- Improved Codex setup instructions in CLI output with recommended direnv approach and alternatives
+
+### Fixed
+
+- Fixed Codex CLI prompt discovery issue ([#417](https://github.com/github/spec-kit/issues/417)) - prompts now discoverable with proper `CODEX_HOME` configuration
+
 ## [0.0.20] - 2025-10-14
 
 ### Added

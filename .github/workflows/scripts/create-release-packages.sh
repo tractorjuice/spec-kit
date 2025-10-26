@@ -167,7 +167,27 @@ build_variant() {
       generate_commands windsurf md "\$ARGUMENTS" "$base_dir/.windsurf/workflows" "$script" ;;
     codex)
       mkdir -p "$base_dir/.codex/prompts"
-      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts" "$script" ;;
+      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts" "$script"
+
+      # Create .envrc for Codex CODEX_HOME setup
+      cat > "$base_dir/.envrc" <<'ENVRC_EOF'
+# Auto-generated for Codex CLI support
+# This file sets CODEX_HOME so Codex can discover project-specific prompts
+# See: https://github.com/github/spec-kit/issues/417
+
+export CODEX_HOME="$PWD/.codex"
+ENVRC_EOF
+
+      # Create .gitignore with Codex-specific entries
+      cat > "$base_dir/.gitignore" <<'GITIGNORE_EOF'
+# Codex CLI - exclude auth tokens but include prompts
+.codex/*
+!.codex/prompts/
+
+# direnv
+.envrc.local
+GITIGNORE_EOF
+      ;;
     kilocode)
       mkdir -p "$base_dir/.kilocode/workflows"
       generate_commands kilocode md "\$ARGUMENTS" "$base_dir/.kilocode/workflows" "$script" ;;
